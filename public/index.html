@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记忆卡片复习工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 记忆卡片复习工具</h1>
+            <div id="stats" class="stats"></div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-view="decks">📚 我的卡片组</button>
+            <button class="tab-btn" data-view="community">🌐 社区广场</button>
+            <button class="tab-btn" data-view="review">📖 复习</button>
+            <button class="tab-btn" data-view="exam">📝 考试模式</button>
+        </nav>
+
+        <main id="main-content">
+            <section id="decks-view" class="view active">
+                <div class="deck-actions">
+                    <button id="new-deck-btn" class="btn-primary">+ 新建卡片组</button>
+                </div>
+                <div id="decks-list" class="decks-grid"></div>
+            </section>
+
+            <section id="cards-view" class="view">
+                <div class="view-header">
+                    <button id="back-to-decks" class="btn-secondary">← 返回</button>
+                    <h2 id="deck-title"></h2>
+                    <div class="deck-actions">
+                        <button id="new-card-btn" class="btn-primary">+ 新建卡片</button>
+                        <button id="review-deck-btn" class="btn-success">开始复习</button>
+                    </div>
+                </div>
+                <div id="cards-list" class="cards-list"></div>
+            </section>
+
+            <section id="review-view" class="view">
+                <div class="view-header">
+                    <button id="back-from-review" class="btn-secondary">← 退出复习</button>
+                    <div class="review-progress">
+                        <span id="review-progress-text">0 / 0</span>
+                    </div>
+                </div>
+                <div id="review-container" class="review-container">
+                    <div class="card-wrapper" id="review-card">
+                        <div class="card-inner">
+                            <div class="card-front" id="card-front">
+                                <div class="card-label">问题</div>
+                                <div class="card-content" id="front-content"></div>
+                            </div>
+                            <div class="card-back" id="card-back">
+                                <div class="card-label">答案</div>
+                                <div class="card-content" id="back-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-controls" id="review-controls">
+                        <button id="show-answer-btn" class="btn-primary">显示答案</button>
+                    </div>
+                    <div class="rating-buttons" id="rating-buttons" style="display: none;">
+                        <button class="rating-btn bad" data-rating="0">0 完全忘记</button>
+                        <button class="rating-btn hard" data-rating="2">2 困难</button>
+                        <button class="rating-btn good" data-rating="4">4 良好</button>
+                        <button class="rating-btn easy" data-rating="5">5 简单</button>
+                    </div>
+                </div>
+                <div id="review-complete" class="review-complete" style="display: none;">
+                    <div class="complete-icon">🎉</div>
+                    <h2>复习完成！</h2>
+                    <p id="review-summary">你已经复习了所有待复习的卡片</p>
+                    <button id="complete-btn" class="btn-primary">返回</button>
+                </div>
+            </section>
+
+            <section id="community-view" class="view">
+                <div class="view-header">
+                    <div class="search-container">
+                        <input type="text" id="community-search" placeholder="搜索卡片组..." class="search-input">
+                        <select id="community-sort" class="sort-select">
+                            <option value="recent">最新发布</option>
+                            <option value="popular">最受欢迎</option>
+                            <option value="views">最多浏览</option>
+                        </select>
+                    </div>
+                    <div id="community-decks-list" class="decks-grid"></div>
+                </div>
+            </section>
+
+            <section id="exam-view" class="view">
+                <div id="exam-list-view">
+                    <div class="view-header">
+                        <h2>考试模式</h2>
+                        <button id="new-exam-btn" class="btn-primary">+ 创建考试</button>
+                    </div>
+                    <div id="exams-list" class="exams-list"></div>
+                </div>
+
+                <div id="exam-running-view" style="display: none;">
+                    <div class="view-header">
+                        <div class="exam-timer">⏱️ <span id="exam-timer-display">00:00</span></div>
+                        <div class="exam-progress">题目: <span id="exam-current-card">1</span>/<span id="exam-total-cards">0</span></div>
+                        <button id="exam-submit-btn" class="btn-primary">提交试卷</button>
+                    </div>
+                    <div class="exam-question-container">
+                        <div class="exam-question" id="exam-question"></div>
+                        <div class="exam-answer-area">
+                            <textarea id="exam-answer-input" placeholder="输入你的答案..."></textarea>
+                        </div>
+                        <div class="exam-navigation">
+                            <button id="exam-prev-btn" class="btn-secondary">← 上一题</button>
+                            <button id="exam-next-btn" class="btn-primary">下一题 →</button>
+                            <button id="exam-read-front" class="btn-secondary" title="语音朗读问题">🔊 朗读</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="exam-results-view" style="display: none;">
+                    <div class="exam-results-container">
+                        <div class="exam-score-circle">
+                            <span id="exam-score">0</span>
+                        </div>
+                        <h2 id="exam-result-title">考试完成！</h2>
+                        <div class="exam-stats">
+                            <div class="exam-stat">正确: <span id="exam-correct-count">0</span></div>
+                            <div class="exam-stat">错误: <span id="exam-wrong-count">0</span></div>
+                            <div class="exam-stat">总题数: <span id="exam-total-count">0</span></div>
+                        </div>
+                        <div id="exam-results-details"></div>
+                        <div class="exam-results-actions">
+                            <button id="exam-back-btn" class="btn-secondary">返回考试列表</button>
+                            <button id="exam-retry-btn" class="btn-primary">再来一次</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modal-title"></h3>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
